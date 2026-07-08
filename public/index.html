@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单视频解析 | 抖音数据助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans SC', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glow-text { text-shadow: 0 0 20px rgba(56, 189, 248, 0.5); }
+        .pulse-border { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { border-color: rgba(56, 189, 248, 0.2); } 50% { border-color: rgba(56, 189, 248, 0.8); box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); } }
+        .gradient-text { background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden">
+    <!-- Abstract Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600 opacity-20 blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600 opacity-10 blur-[150px]"></div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="relative z-10 border-b border-white/10 glass-panel">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg">D</div>
+                    <span class="text-lg font-bold tracking-wider">数据提取中枢 <span class="text-blue-400 text-xs ml-1 border border-blue-400/30 px-2 py-0.5 rounded-full">PRO</span></span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="/batch.html?type=profile" class="text-sm text-gray-400 hover:text-white transition-colors">主页全量采集</a>
+                    <a href="/batch.html?type=range" class="text-sm text-gray-400 hover:text-white transition-colors">主页范围采集</a>
+                    <a href="/batch.html?type=mix" class="text-sm text-gray-400 hover:text-white transition-colors">合集视频采集</a>
+                    <div class="w-px h-4 bg-gray-600 mx-2"></div>
+                    <a href="/multi.html" class="text-sm text-gray-400 hover:text-white transition-colors">多视频解析</a>
+                    <a href="/" class="text-sm font-medium transition-colors border-b-2 px-1 py-1 text-white border-blue-400">单视频解析</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="relative z-10 max-w-4xl mx-auto pt-16 px-4 pb-20">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-black mb-4 tracking-tight glow-text" id="pageTitle">单视频<span class="gradient-text">深度解析</span></h1>
+            <p class="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed" id="pageDesc">输入抖音单视频链接，我们将全自动提取视频文案、各项数据指标，并为您实时导入飞书多维表格。</p>
+        </div>
+
+        <!-- Main Form Card -->
+        <div class="glass-panel rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden mb-10">
+            <!-- Decorative corner line -->
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-blue-500/20 to-transparent"></div>
+
+            <form id="parseForm" class="space-y-6 relative z-10">
+                <!-- URL Input -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2" id="urlLabel">抖音视频链接 URL</label>
+                    <div class="relative">
+                        <input type="url" id="url" required placeholder="https://www.douyin.com/video/..." 
+                            class="w-full bg-slate-800/50 border border-slate-600 rounded-xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-mono text-sm">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+                            <svg class="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feishu Credentials Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-4 border-t border-white/5">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 mb-1">飞书 App ID</label>
+                        <input type="text" id="appId" required class="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-3 py-2 text-gray-300 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 mb-1">飞书 App Secret</label>
+                        <input type="password" id="appSecret" required class="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-3 py-2 text-gray-300 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 mb-1">多维表格 App Token</label>
+                        <input type="text" id="appToken" required class="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-3 py-2 text-gray-300 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none transition-colors">
+                    </div>
+                </div>
+
+                <div class="pt-4 flex flex-col gap-4">
+                    <div id="checkpointInfo" class="hidden w-full bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 flex items-start gap-3">
+                        <div class="mt-0.5">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-blue-400 font-bold text-sm mb-1">发现未完成的解析任务</h4>
+                            <p id="checkpointText" class="text-slate-300 text-sm">该链接的后台解析任务正在执行中，您可以点击「继续执行」恢复进度。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <button type="submit" id="submitBtn" class="flex-[3] relative group overflow-hidden rounded-xl font-bold text-lg py-4 transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_30px_rgba(56,189,248,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none">
+                            <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 opacity-90 group-hover:opacity-100 transition-opacity"></div>
+                            <span class="relative text-white flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                <span>开始解析</span>
+                            </span>
+                        </button>
+                        
+                        <button type="button" id="continueBtn" class="hidden flex-[3] relative group overflow-hidden rounded-xl font-bold text-lg py-4 transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_30px_rgba(34,197,94,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none">
+                            <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-green-500 to-emerald-600 opacity-90 group-hover:opacity-100 transition-opacity"></div>
+                            <span class="relative text-white flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                继续执行
+                            </span>
+                        </button>
+
+                        <button type="button" id="stopBtn" disabled class="flex-[1] relative group overflow-hidden rounded-xl font-bold text-lg py-4 transition-all duration-300 hover:scale-[1.01] bg-slate-800 border border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                            <span class="relative text-slate-300 flex items-center justify-center gap-2 group-hover:text-red-400 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>
+                                中止
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Terminal/Progress Status Area -->
+        <div id="statusContainer" class="hidden glass-panel rounded-xl overflow-hidden border-slate-700 transition-all duration-500 opacity-0 translate-y-4">
+            <div class="bg-slate-900/80 px-4 py-3 border-b border-slate-700 flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                <span class="ml-2 text-xs text-slate-400 font-mono">system_terminal</span>
+            </div>
+            <div class="p-6">
+                <!-- Dynamic Status Message -->
+                <div class="flex items-center gap-4 mb-6">
+                    <div id="spinner" class="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div id="statusIcon" class="hidden w-6 h-6 rounded-full flex items-center justify-center text-white text-sm"></div>
+                    <p id="statusText" class="text-lg font-medium text-blue-400 glow-text">正在初始化连接...</p>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div id="progressWrapper" class="w-full bg-slate-800 rounded-full h-1.5 mb-6 overflow-hidden">
+                    <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-purple-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+
+                <!-- Result Box -->
+                <div id="resultBox" class="hidden mt-4 space-y-4">
+                    <div class="p-5 rounded-lg bg-green-500/10 border border-green-500/20">
+                        <h3 class="text-green-400 font-bold mb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            任务执行成功
+                        </h3>
+                        <p class="text-slate-300 text-sm mb-4">共采集并处理 <span id="resultCount" class="font-bold text-white mx-1">1</span> 条视频数据。</p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <a id="bitableLink" href="#" target="_blank" class="flex-1 bg-green-600 hover:bg-green-500 text-white text-center text-sm font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2">
+                                打开飞书表格
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            </a>
+                            <button id="copyLinkBtn" class="sm:flex-none px-4 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium py-2.5 rounded-lg transition-colors">
+                                复制链接
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Single Video Detail View -->
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-5">
+                        <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-4 border-b border-slate-700 pb-2">解析详情</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="md:col-span-1 space-y-4">
+                                <div class="aspect-w-9 aspect-h-16 rounded-lg overflow-hidden bg-slate-900 border border-slate-700">
+                                    <img id="coverImg" src="" alt="视频封面" class="object-cover w-full h-full max-h-64 object-center">
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
+                                        <p class="text-xs text-slate-500 mb-1">点赞量</p>
+                                        <p class="text-lg font-bold text-white" id="likesCount">0</p>
+                                    </div>
+                                    <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
+                                        <p class="text-xs text-slate-500 mb-1">评论量</p>
+                                        <p class="text-lg font-bold text-white" id="commentsCount">0</p>
+                                    </div>
+                                    <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
+                                        <p class="text-xs text-slate-500 mb-1">收藏量</p>
+                                        <p class="text-lg font-bold text-white" id="favoritesCount">0</p>
+                                    </div>
+                                    <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
+                                        <p class="text-xs text-slate-500 mb-1">分享量</p>
+                                        <p class="text-lg font-bold text-white" id="sharesCount">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="md:col-span-2 flex flex-col space-y-4 h-full">
+                                <div>
+                                    <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">视频标题/描述</h4>
+                                    <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700/50 text-slate-300 text-sm leading-relaxed" id="videoTitle"></div>
+                                </div>
+                                <div class="flex-grow flex flex-col">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">提取文案</h4>
+                                        <button id="copyBtn" class="text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors">复制文案</button>
+                                    </div>
+                                    <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700/50 text-slate-300 text-sm leading-relaxed whitespace-pre-wrap flex-grow min-h-[150px]" id="videoTranscript"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Error Box -->
+                <div id="errorBox" class="hidden mt-4 p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <h3 class="text-red-400 font-bold text-sm mb-1 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        发生错误
+                    </h3>
+                    <p id="errorMsg" class="text-slate-300 text-sm"></p>
+                    <button id="retryBtn" class="mt-3 text-xs text-red-400 hover:text-red-300 underline underline-offset-2">重新尝试</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="mt-12">
+            <h3 class="text-slate-400 text-sm font-bold uppercase tracking-widest mb-4">最近提取历史</h3>
+            <div id="historyList" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- History items injected by JS -->
+            </div>
+            <p id="emptyHistory" class="text-slate-600 text-sm italic">暂无提取记录</p>
+        </div>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

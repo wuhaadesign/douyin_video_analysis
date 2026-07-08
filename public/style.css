@@ -1,0 +1,14 @@
+/* Additional custom styles if needed */
+.aspect-w-9 {
+  position: relative;
+  padding-bottom: 177.77%; /* 16:9 Aspect Ratio (divide 16 by 9 = 1.7777...) */
+}
+.aspect-w-9 > img {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}

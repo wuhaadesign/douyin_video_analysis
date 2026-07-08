@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+
+# Runtime data (断点续传缓存，运行时自动生成)
+checkpoints/*.json
+
+# Temp media files (抓取过程中的临时音视频，用完即删)
+tmp_audio_*.wav
+tmp_video_*.mp4
+
+# Logs
+logs/
+*.log
+
+# Debug / test artifacts
+*_debug.json
+debug_*.html
+debug_*.png
+pc_test*.html
+*.mp4
+
+# OS
+.DS_Store

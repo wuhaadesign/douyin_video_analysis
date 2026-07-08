@@ -1,0 +1,24 @@
+{
+  "name": "douyin-parser",
+  "version": "1.0.0",
+  "description": "Douyin Video Parser Tool",
+  "main": "server.js",
+  "scripts": {
+    "postinstall": "cd node_modules/whisper-node/lib/whisper.cpp/models && ./download-ggml-model.sh base || true",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@larksuiteoapi/node-sdk": "^1.61.1",
+    "axios": "^1.15.2",
+    "cli-progress": "^3.12.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "ffmpeg-static": "^5.3.0",
+    "opencc-js": "^1.0.5",
+    "puppeteer": "^21.11.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "whisper-node": "^1.1.1"
+  }
+}
